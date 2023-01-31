@@ -208,37 +208,7 @@ with faceModule.FaceMesh(static_image_mode=True) as face:
                 graphLandmarks.append(item)
                 G.add_node(item.getNumero())
 
-        # calcolo la distanza di ciascun landmark dagli altri landmark
-        """for n1 in graphLandmarks:
-            point1 = (n1.getNormalizedX(), n1.getNormalizedY())
-            for n2 in graphLandmarks:
-                point2 = (n2.getNormalizedX(), n2.getNormalizedY())
-                manDistance = cityblock(point1, point2)
-                n1.setEuclideanDistanceLandmarks(manDistance)
-
-        for item in graphLandmarks:
-            for i in min_n_nums(item.getEuclideanDistanceLandmarks(),
-                                4):  # prendo i 3/5/7 landmark più vicini (compreso il landmark stesso)
-                landmarkIndex = item.getEuclideanDistanceLandmarks().index(
-                    i)  # il primo item è sempre il landmark stesso
-                if landmarkIndex >= len(graphLandmarks):
-                    continue
-                item.setNearLandmarks(graphLandmarks[landmarkIndex])
-            del item.getNearLandmarks()[0]  # rimuovo il primo landmark dalla lista (ovvero il landmark stesso)
-
-        for nodeU in graphLandmarks:
-            pt1 = (nodeU.getNormalizedX(), nodeU.getNormalizedY())
-            for nodeV in nodeU.getNearLandmarks():
-                pt2 = (nodeV.getNormalizedX(), nodeV.getNormalizedY())
-                manhattan = cityblock(pt1, pt2)
-                G.add_edge(nodeU.getNumero(), nodeV.getNumero(), weight=manhattan)
-        for arco in G.edges:
-            print(G.get_edge_data(arco[0], arco[1]))"""
-
-
-        """for item in graphLandmarks:
-            item.getEuclideanDistanceLandmarks().clear()
-            item.getNearLandmarks().clear()"""
+        
         n = 0
 for nodeU in graphLandmarks:
     startPoint = (nodeU.getX(), nodeU.getY())
