@@ -109,16 +109,7 @@ lineDrawingSpec = drawingModule.DrawingSpec(thickness=1, color=(255, 0, 0))
 
 # directories = os.listdir(path)
 landmarks = []
-"""andmarksToRemove = [157, 158, 159, 160, 154, 153, 145, 144, 374, 373, 390, 385, 386, 387, 161, 384, 380, 163, 23, 
-27,28,30, 381,258,257,259,260, 42,61,62,74,76,78,88,95,96,183,184,191, 40, 73,77,81,89,146,179, 12,13,14,15,38,87,
-268,312,315,316,317, 0, 37, 267, 269, 11,12,14,15,16,17,84,314,405,181,85,86,72,11,302,303,415, 38,39,41,81,87,90,91,
-178,180, 178,81,41,80,88,89,191,77,84,82,75,185] """
-# landmarks aggiunti manualmente: 1,4,5,195,197,6, 168,8, 9,49,279,115,45,275,440,344,279,48,378, 450, 148,152,377,230, 147,411
-# 151, 108, 69,104,337,299,333,171,175,396
-# landmarks da togliere:
-# OCCHI: 157,158,159,160, 161,246, 7,163, 144,145,153,154,155,133,384,385,386,387,388,398,362,381,380,374,373,390
-# sopracciglia: 65,66,105,52, 295,296,334,282
-# bocca: 0,37,39,40, 267, 269,270,17,84,181,91, 314,405,321,146,409,14,13,178,80,88,291,415,310,312,191,82,
+
 landmarksImportanti = [
     1, 4, 195, 197, 6, 168, 8, 9, 49, 279, 115, 45, 275, 440, 344, 279, 48, 378, 450, 148, 152, 377, 230, 147, 411, 151,
     108, 69, 104, 337, 299, 333, 396, 5, 171, 175, 10, 21, 33, 46, 53, 54, 55, 58, 61, 63, 67, 70, 78, 81, 87, 93, 95,
@@ -215,30 +206,6 @@ for item in chosenLandmarks:
         graphLandmarks.append(item)
         G.add_node(item.getNumero())
 
-
-"""points = []
-D = nx.Graph()
-for n in graphLandmarks:
-    point = [n.getNormalizedX(), n.getNormalizedY()]
-    points.append(point)
-tri = Delaunay(points)
-for i, point in enumerate(points):
-    D.add_node(i, pos=point, attribute=point[-1])
-
-for i, j, k in tri.simplices:
-    D.add_edge(i, j)
-    D.add_edge(j, k)
-    D.add_edge(k, i)
-
-for u in D.nodes(data=True):
-    p1 = (u[1]['pos'][0], u[1]['pos'][1])
-    for v in D.nodes(data=True):
-        if D.has_edge(u[0], v[0]):
-            p2 = (v[1]['pos'][0], v[1]['pos'][1])
-            ooohMan = cityblock(p1,p2)
-            D[u[0]][v[0]]['weight'] = ooohMan
-
-"""
 # calcolo la distanza di ciascun landmark dagli altri landmark
 for n1 in graphLandmarks:
     point1 = (n1.getNormalizedX(), n1.getNormalizedY())
