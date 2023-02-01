@@ -3,7 +3,8 @@ import math
 import os
 from operator import attrgetter
 import csv
-
+from karateclub import Graph2Vec
+from scipy.spatial.distance import cityblock
 import networkx
 import networkx as nx
 import cv2
@@ -11,7 +12,9 @@ import glob
 from math import dist
 import mediapipe
 import mediapipe as mp
-
+import re
+from karateclub.graph_embedding import graph2vec
+from scipy.spatial import Delaunay
 
 class Landmark:
     x = 0
@@ -101,6 +104,7 @@ class Landmark:
 drawingModule = mediapipe.solutions.drawing_utils
 faceModule = mediapipe.solutions.face_mesh
 
+directories = os.listdir("/home/ale/Desktop/biwi_rgb_renamedFixed/2/")
 landmarks = []
 landmarksImportanti = [
     1,
@@ -182,22 +186,26 @@ while x < 468:
 def min_n_nums(nums, n=1):
     return sorted(nums, reverse=False)[:n]
 
-n = 0
+connesso = 0
 with faceModule.FaceMesh(static_image_mode=True) as face:
-    image = cv2.imread("/home/ale/Desktop/biwi_rgb_renamed/1/frame_00003_+007.61+003.29-001.57.png")  # posa frontale
-    results = face.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    if results.multi_face_landmarks is not None:
-        for faceLandmarks in results.multi_face_landmarks:
-            for landmark in faceLandmarks.landmark:
-                x = landmark.x
-                y = landmark.y
+    imgs = [cv2.imread(file) for file in glob.glob("/home/ale/Desktop/biwi_rgb_renamedFixed/2/*")]
+    for pic in imgs:
+        results = face.process(cv2.cvtColor(pic, cv2.COLOR_BGR2RGB))
+        if results.multi_face_landmarks is not None:
+            for faceLandmarks in results.multi_face_landmarks:
+                """drawingModule.draw_landmarks(img, faceLandmarks, faceModule.FACEMESH_LIPS, circleDrawingSpec,
+                                                     lineDrawingSpec)"""
 
-                shape = image.shape
-                relative_x = int(x * shape[1])
-                relative_y = int(y * shape[0])
-                landmarks[n].setX(relative_x)
-                landmarks[n].setY(relative_y)
-                n = n + 1
+                for landmark in faceLandmarks.landmark:
+                    x = landmark.x
+                    y = landmark.y
+
+                    shape = pic.shape
+                    relative_x = int(x * shape[1])
+                    relative_y = int(y * shape[0])
+                    landmarks[n].setX(relative_x)
+                    landmarks[n].setY(relative_y)
+                    n = n + 1
 
         G = nx.Graph()
         graphLandmarks = []
@@ -208,17 +216,62 @@ with faceModule.FaceMesh(static_image_mode=True) as face:
                 graphLandmarks.append(item)
                 G.add_node(item.getNumero())
 
+
+
+        for item in graphLandmarks:
+            item.setModulo(math.sqrt(item.getX() ** 2 + item.getY() ** 2))
+
+        maximumM = max(graphLandmarks, key=attrgetter('modulo')).getModulo()
+        minimumM = min(graphLandmarks, key=attrgetter('modulo')).getModulo()
+
+        for item in landmarks:  # normalizzo
+            item.setNormalizedX((item.getX() - graphLandmarks[0].getX()) / (maximumM - minimumM))
+            item.setNormalizedY((item.getY() - graphLandmarks[0].getY()) / (maximumM - minimumM))
+
+
+        points = []
+
+        for n in graphLandmarks:
+            point = [n.getNormalizedX(), n.getNormalizedY()]
+            points.append(point)
+        #D = nx.complete_graph(len(points))
+        D = nx.Graph()
+        #D.add_nodes_from(graphLandmarks)
+
+        for i, point in enumerate(points):
+            D.add_node(i, posX=point[0], posY=point[1])
+
+        for u in D.nodes(data=True):
+            p1 = (u[1]['posX'], u[1]['posY'])
+            for v in D.nodes(data=True):
+                if u[0] < v[0]:
+                    p2 = (v[1]['posX'], v[1]['posY'])
+                    manhattanDistance = cityblock(p1, p2)
+                    D.add_edge(u[0], v[0], weight=manhattanDistance)
+
+
+        if nx.is_connected(D):
+            connesso = connesso + 1
+        
         
         n = 0
-for nodeU in graphLandmarks:
-    startPoint = (nodeU.getX(), nodeU.getY())
-    for nodeV in graphLandmarks:
-        endPoint = (nodeV.getX(), nodeV.getY())
+        data1 = nx.node_link_data(D)
+        graphJSON.append(data1)
+        print(data1)
 
-        cv2.line(image, startPoint, endPoint, color=(255, 250, 255), thickness=1)
+graphID = 0
+file = open('/home/ale/Desktop/histograms/Delaunay/csvK3/graph2.csv', 'w', newline='')
+print(connesso)
+with file:
+    # identifying header
+    header = ['filename', 'graph']
+    writer = csv.DictWriter(file, fieldnames=header)
 
-for item in graphLandmarks:
-    cv2.circle(image, (item.getX(), item.getY()), radius=0, color=(0, 0, 255), thickness=0)
-cv2.imshow("test", image)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+    # writing data row-wise into the csv file
+    writer.writeheader()
+    for file in directories:
+        writer.writerow({'filename': file,
+                         'graph': graphJSON[graphID],
+                         })
+        graphID = graphID + 1
+
