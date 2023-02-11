@@ -23,9 +23,7 @@ range = -80
 col_names = ["testGraph", "pitch", "yaw", "roll", "avg"]
 data = read_csv("/home/ale/Desktop/histograms/graphK3/graphsk3YPRManhattan.csv", usecols=col_names)
 
-# listPitch.append(data.values[0][0])
-# listYaw.append(data.values[0][1])
-# listRoll.append(data.values[0][2])
+
 x_ticks = [-80, -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80]
 for item in x_ticks:
         pitchRangeAndError.append([range, range + 10])
@@ -179,49 +177,4 @@ for item in rollRangeAndError:
         print(str(item[0]) + str(item[1]) + " " + str(item[2]))
 
 print("------------------")
-"""for item in data.values:
-        if not (math.isnan(item[1])):
-                listPitch.append(item[1])
 
-del listPitch[499]
-
-
-for item in data.values:
-        if not (math.isnan(item[2])):
-                listYaw.append(item[2])
-
-
-del listYaw[499]
-
-
-for item in data.values:
-        if not (math.isnan(item[3])):
-                listRoll.append(item[3])"""
-
-#del listRoll[499]
-# devo plottare l'error?
-numpyArrPitch = np.array(pitchTestArray)  # blu
-numpyArrYaw = np.array(yawTestArray)  # arancione
-numpyArrRoll = np.array(rollTestArray)  # verde
-
-
-
-
-"""fig, axis = plt.subplots(figsize=(10, 15))
-colors = ['blue', 'orange', 'green']
-labels = ["Pitch", "Yaw", "Roll"]
-plt.title('test')
-plt.xticks(ticks=x_ticks)
-axis.hist([numpyArrPitch, numpyArrYaw, numpyArrRoll],
-          bins=[-80, -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80], color=colors, label=labels)
-axis.legend(prop={'size': 10})
-axis.grid(b=True, color='grey',
-          linestyle='-.', linewidth=0.5,
-          alpha=0.6)
-plt.yticks(np.arange(0, 80, step=10))
-for i in axis.patches:
-    height.append(i.get_height())  # altezza delle barre
-# plt.yticks(ticks=height) #setto i tick in base all'altezza
-plt.xlabel("Ground truth")
-plt.ylabel("Error in degree")
-plt.show()"""
