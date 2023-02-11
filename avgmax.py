@@ -10,7 +10,7 @@ def sortSecond(val):
 
 
 col_names = ["testGraph", "avg"]
-data1 = read_csv("/home/ale/Desktop/histograms/Delaunay/csvK3/graphsK3YPR.csv", usecols=col_names)
+data1 = read_csv("/home/ale/Desktop/histograms/completeG/csvK/graphsKYPR.csv", usecols=col_names)
 data2 = read_csv("/home/ale/Desktop/histograms/csvK5/graphsK5YPR.csv", usecols=col_names)
 
 avgData = data1.values
